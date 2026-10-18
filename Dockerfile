@@ -7,7 +7,7 @@ RUN adduser --disabled-password --gecos "" --uid 10001 appuser
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY fortunes main.py ./
+COPY fortunes main.py parser.py devils_dictionary.txt ./
 
 USER appuser
 
