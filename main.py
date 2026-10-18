@@ -56,6 +56,7 @@ async def get_dict_help():
         "message": "Welcome to The Devil's Dictionary API!",
         "endpoints": {
             "/dict": "Returns this help message in JSON format",
+            "/dict/lemmata": "Returns a JSON list of all lemmata with id and lemma name",
             "/dict/random": "Returns a random quote from The Devil's Dictionary",
             "/dict/{n}": "Returns the n-th quote in the dictionary (1-indexed)",
             "/dict/{letter}": "Returns sequence number limits (min_id and max_id) for the given letter (e.g. /dict/a)",
@@ -63,6 +64,12 @@ async def get_dict_help():
         },
         "total_quotes": len(dict_db),
     }
+
+
+@app.get("/dict/lemmata")
+@app.get("/dict/lemmas")
+async def get_dict_lemmata():
+    return [{"id": idx, "lemma": entry["lemma"]} for idx, entry in enumerate(dict_db, start=1)]
 
 
 @app.get("/dict/random")

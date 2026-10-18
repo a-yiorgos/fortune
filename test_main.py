@@ -66,6 +66,21 @@ def test_dict_help():
     assert len(dict_db) == 995
 
 
+def test_dict_lemmata():
+    response = client.get("/dict/lemmata")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) == len(dict_db)
+    assert data[0] == {"id": 1, "lemma": "ABASEMENT"}
+    assert data[-1] == {"id": 995, "lemma": "ZOOLOGY"}
+
+    # Also test alias /dict/lemmas
+    response_alias = client.get("/dict/lemmas")
+    assert response_alias.status_code == 200
+    assert response_alias.json() == data
+
+
 def test_dict_random():
     response = client.get("/dict/random")
     assert response.status_code == 200

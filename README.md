@@ -10,6 +10,7 @@ A lightweight FastAPI application that serves fortune quotes from the classic Re
   - **N-th Quote (`/fortune/{n}`)**: Returns the 1-indexed $n$-th fortune in the dataset, or a `404 Not Found` error if $n$ is out of bounds.
 - **Devil's Dictionary API (`/dict`)**:
   - **Help Endpoint (`/dict`)**: Returns a JSON summary of available dictionary endpoints.
+  - **Lemmata List (`/dict/lemmata`)**: Returns a JSON list of all lemmata with `id` and `lemma` name.
   - **Random Dictionary Entry (`/dict/random`)**: Returns a randomly selected quote/definition from *The Devil's Dictionary*.
   - **N-th Entry (`/dict/{n}`)**: Returns the 1-indexed $n$-th quote/definition.
   - **Letter Sequence Limits (`/dict/{letter}`)**: Returns sequence number limits (`min_id` and `max_id`) for quotes under a specific letter (e.g. `/dict/a` or `/dict/A`).
@@ -32,6 +33,7 @@ A lightweight FastAPI application that serves fortune quotes from the classic Re
 | Endpoint | Method | Description | Response Example |
 |---|---|---|---|
 | `/dict` | GET | Returns API help message and total quote count | `{"message": "Welcome...", "endpoints": {...}, "total_quotes": 995}` |
+| `/dict/lemmata` | GET | Returns list of all lemmata with ID and name | `[{"id": 1, "lemma": "ABASEMENT"}, ...]` |
 | `/dict/random` | GET | Returns a random quote | `{"id": 12, "lemma": "ABNORMAL", "definition": "ABNORMAL, adj. Not conforming..."}` |
 | `/dict/{n}` | GET | Returns the $n$-th quote (1-indexed) | `{"id": 1, "lemma": "ABASEMENT", "definition": "ABASEMENT, n. A decent..."}` |
 | `/dict/{letter}` | GET | Returns range limits for the given letter | `{"letter": "a", "min_id": 1, "max_id": 83}` |
