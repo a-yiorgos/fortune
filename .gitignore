@@ -8,3 +8,5 @@ htmlcov/
 .venv
 venv/
 ENV/
+node_modules/
+frontend/node_modules/

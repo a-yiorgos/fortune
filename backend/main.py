@@ -2,9 +2,18 @@ import os
 import random
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from parser import parse_devils_dictionary
 
 app = FastAPI(title="Fortune and Devil's Dictionary API", description="API server serving quotes from UNIX fortunes and The Devil's Dictionary")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 FORTUNES_FILE = Path(__file__).parent / "fortunes"
 
