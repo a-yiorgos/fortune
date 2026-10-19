@@ -1,76 +1,80 @@
-# Fortune & Devil's Dictionary API
+# Fortune & Devil's Dictionary Application
 
-A lightweight FastAPI application that serves fortune quotes from the classic Research-V7 Unix fortunes file (`usr/games/lib/fortunes`) and definitions/quotes from Ambrose Bierce's *The Devil's Dictionary* (Project Gutenberg #972).
+This repository consists of a backend API serving Unix fortunes and Ambrose Bierce's *The Devil's Dictionary*, along with a web front-end application to interact with it.
 
-## Features
+## Architecture
 
-- **Fortune API**:
-  - **Help Endpoint (`/fortune`)**: Returns a JSON summary of available fortune endpoints and API information.
-  - **Random Quote (`/fortune/random`)**: Returns a randomly selected fortune from the dataset.
-  - **N-th Quote (`/fortune/{n}`)**: Returns the 1-indexed $n$-th fortune in the dataset, or a `404 Not Found` error if $n$ is out of bounds.
-- **Devil's Dictionary API (`/dict`)**:
-  - **Help Endpoint (`/dict`)**: Returns a JSON summary of available dictionary endpoints.
-  - **Lemmata List (`/dict/lemmata`)**: Returns a JSON list of all lemmata with `id` and `lemma` name.
-  - **Random Dictionary Entry (`/dict/random`)**: Returns a randomly selected quote/definition from *The Devil's Dictionary*.
-  - **N-th Entry (`/dict/{n}`)**: Returns the 1-indexed $n$-th quote/definition.
-  - **Letter Sequence Limits (`/dict/{letter}`)**: Returns sequence number limits (`min_id` and `max_id`) for quotes under a specific letter (e.g. `/dict/a` or `/dict/A`).
-  - **Random Entry by Letter (`/dict/random/{letter}`)**: Returns a random quote starting with the specified letter (e.g. `/dict/random/a`).
-- **Configurable Port**: Listens on the port specified by the `PORT` environment variable (defaults to `8000`).
-- **Rootless Container**: Includes a Dockerfile designed for rootless container runtimes.
+- **`backend/`**: FastAPI service listening on port 8000 (by default) that serves fortune and dictionary quotes.
+- **`frontend/`**: Express web server listening on port 3000 that serves an interactive UI with "Fortune" and "Dictionary" buttons. The frontend connects to the backend via `BACKEND_URL` environment variable (defaults to `http://127.0.0.1:8000`).
 
-## API Endpoints
+---
 
-### Fortune Endpoints
+## Backend (`backend/`)
 
-| Endpoint | Method | Description | Response Example |
-|---|---|---|---|
-| `/fortune` | GET | Returns API help message and total fortune count | `{"message": "Welcome...", "endpoints": {...}, "total_fortunes": 141}` |
-| `/fortune/random` | GET | Returns a random fortune quote | `{"fortune": "Words must be weighed, not counted."}` |
-| `/fortune/{n}` | GET | Returns the $n$-th fortune quote (1-indexed) | `{"id": 1, "fortune": "Some men are discovered; others are found out."}` |
+### Features & Endpoints
 
-### Devil's Dictionary Endpoints
+- **Fortune Endpoints**:
+  - `GET /fortune`: API help and fortune count.
+  - `GET /fortune/random`: Random fortune quote.
+  - `GET /fortune/{n}`: $n$-th fortune quote (1-indexed).
+- **Devil's Dictionary Endpoints**:
+  - `GET /dict`: API help and total entries count.
+  - `GET /dict/lemmata`: List of all lemmata.
+  - `GET /dict/random`: Random dictionary entry.
+  - `GET /dict/{n}`: $n$-th entry (1-indexed).
+  - `GET /dict/{letter}`: Range limits for a specific letter.
+  - `GET /dict/random/{letter}`: Random entry starting with a letter.
 
-| Endpoint | Method | Description | Response Example |
-|---|---|---|---|
-| `/dict` | GET | Returns API help message and total quote count | `{"message": "Welcome...", "endpoints": {...}, "total_quotes": 995}` |
-| `/dict/lemmata` | GET | Returns list of all lemmata with ID and name | `[{"id": 1, "lemma": "ABASEMENT"}, ...]` |
-| `/dict/random` | GET | Returns a random quote | `{"id": 12, "lemma": "ABNORMAL", "definition": "ABNORMAL, adj. Not conforming..."}` |
-| `/dict/{n}` | GET | Returns the $n$-th quote (1-indexed) | `{"id": 1, "lemma": "ABASEMENT", "definition": "ABASEMENT, n. A decent..."}` |
-| `/dict/{letter}` | GET | Returns range limits for the given letter | `{"letter": "a", "min_id": 1, "max_id": 83}` |
-| `/dict/random/{letter}` | GET | Returns a random quote for the given letter | `{"id": 5, "lemma": "ABILITY", "definition": "ABILITY, n. The natural..."}` |
-
-## Local Setup
-
-### Prerequisites
-
-- Python 3.10+
-
-### Installation & Execution
-
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Run the server using Python or uvicorn:
-   ```bash
-   python main.py
-   ```
-   Or explicitly set `PORT`:
-   ```bash
-   PORT=8080 python main.py
-   ```
-
-3. Run tests:
-   ```bash
-   python3 -m pytest
-   ```
-
-## Docker Usage
-
-Build and run the rootless container:
+### Local Setup & Testing
 
 ```bash
-docker build -t fortune-api .
-docker run -p 8000:8000 -e PORT=8000 fortune-api
+cd backend
+pip install -r requirements.txt
+python main.py
+```
+
+Run tests:
+```bash
+cd backend
+python3 -m pytest
+```
+
+### Docker Usage
+
+```bash
+cd backend
+docker build -t fortune-backend .
+docker run -p 8000:8000 -e PORT=8000 fortune-backend
+```
+
+---
+
+## Frontend (`frontend/`)
+
+### Features
+
+- Web UI with **Fortune** and **Dictionary** buttons.
+- Fetches random quotes from backend endpoints (`/fortune/random` and `/dict/random`).
+- Configurable backend target via `BACKEND_URL` environment variable (defaults to `http://127.0.0.1:8000`).
+- Listens on port 3000 (configurable via `PORT` environment variable).
+
+### Local Setup
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+With custom backend URL:
+```bash
+BACKEND_URL=http://localhost:8000 npm start
+```
+
+### Docker Usage
+
+```bash
+cd frontend
+docker build -t fortune-frontend .
+docker run -p 3000:3000 -e BACKEND_URL=http://127.0.0.1:8000 fortune-frontend
 ```
